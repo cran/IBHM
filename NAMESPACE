@@ -1,0 +1,10 @@
+export(TrainIBHM)
+export(ConfigureIBHM)
+export(IterationSC)
+export(ValidationSC)
+
+
+export(predict.IBHM)
+export(length.IBHM)
+export(summary.IBHM)
+export(print.summary.IBHM)
