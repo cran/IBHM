@@ -9,28 +9,28 @@ Creates a configuration object for \code{\link{TrainIBHM}} function which create
 models.
 }
 \usage{
-
-ConfigureIBHM(stop.criterion = IterationSC(3),
-              weighting.function = function(y){0.01+dcauchy(y)},                                                      
-              
-              scal.optim = 'multi.CMAES',
-              scal.optim.params = list(retries=3, inner=list(maxit=50, stopfitness=-1)),
-              scal.candidates = c('dot.pr','radial','root.radial'),                                                      
-              
-              activ.optim = 'multi.CMAES',
-              activ.optim.params = list(retries=3, inner=list(maxit=100, stopfitness=-1)),
-              activ.candidates = c('tanh','logsig','lin'),
-              
-              jit=TRUE,
-              verbose=FALSE
-            )          
+ConfigureIBHM( stop.criterion = IterationSC(3),
+         weighting.function = function(y, w.par){ 0.01+dnorm(y,sd=abs(w.par))},
+         scal.optim = 'multi.CMAES',
+         scal.optim.params = list(retries=3, inner=list(maxit=50, stopfitness=-1)),
+         scal.candidates = c('dot.pr','radial','root.radial'),
+         activ.optim = 'multi.CMAES',
+         activ.optim.params = list(retries=3, inner=list(maxit=100, stopfitness=-1)),
+         activ.candidates = c('tanh','logsig','lin'),
+         jit=TRUE,
+         verbose=FALSE,
+         final.estimation = 'all',
+         final.estimation.x = NULL,
+         final.estimation.y = NULL,
+         final.estimation.maxit = 100
+       )    
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{stop.criterion}{
   The stop criterion for the model construction process. Possible values include objects created using \code{\link{IterationSC}} (the default) or \code{\link{ValidationSC}}. 
   
-  For simplicity, the defalut value causes the method to construct a model with a fixed number of components (3), however it's actually best to   use \code{\link{ValidationSC}} criterion with a separate validation set.
+  For simplicity, the default value causes the method to construct a model with a fixed number of components (3), however it's actually best to   use \code{\link{ValidationSC}} criterion with a separate validation set.
 }
   \item{weighting.function}{
   Definition of the weighting function used during model construction. This function puts emphasis on local features of the approximated function  (see details).
@@ -50,7 +50,7 @@ ConfigureIBHM(stop.criterion = IterationSC(3),
   
   In case of multistart versions of optimization methods this parameter is a \code{list} with two fields:
   \code{retries} denoting the number of restarts and \code{inner} containing the parameters passed
-  during each restart to the underlying optimisation method.
+  during each restart to the underlying optimization method.
 }
   \item{scal.candidates}{
   Candidate scalarization functions (see details).
@@ -59,7 +59,7 @@ ConfigureIBHM(stop.criterion = IterationSC(3),
   The optimization method used to estimate activation functions' parameters - see description of \code{scal.optim}.
 }
   \item{activ.optim.params}{
-  The parameters passed to the optimization method used to estimate activation functions' parameters - see descripton of the \code{scal.optim.params}.
+  The parameters passed to the optimization method used to estimate activation functions' parameters - see description of the \code{scal.optim.params}.
   
 }
   \item{activ.candidates}{
@@ -72,6 +72,22 @@ ConfigureIBHM(stop.criterion = IterationSC(3),
   \item{verbose}{
   Enables verbose output (disabled by default).
   }
+  
+  \item{final.estimation}{
+  The type of final parameter estimation step. Possible values are: \code{weights} and \code{all} for all parameters.
+  }
+  
+  \item{final.estimation.x}{
+  The \code{x} values used during the final estimation step. If not given then the training data is used.
+  }
+  
+  \item{final.estimation.y}{
+  The \code{y} values used during the final estimation step. If not given then the training data is used.
+  }
+  
+  \item{final.estimation.maxit}{
+  The number of iterations (of the optimizer) during final parameter estimation.
+  }
 }
 
 \details{
@@ -82,7 +98,7 @@ The model constructed by IBHM has the following form:
  where \eqn{h:R^n\rightarrow R}{h:R^n->R} is a scalarization function, \eqn{g:R\rightarrow R}{g:R->R} is an activation function,
  \eqn{d_i} is a parameter vector, and \eqn{a_i, b_i, w_i} are scalar parameters.
  
- The parameter estimation is based on optimizaing weighted correlation 
+ The parameter estimation is based on optimizing weighted correlation 
  measures between the model output and the approximation residual. This allows
  for an iterative model construction process which estimates both model structure
  and parameter values. For more details see [Zawistowski and Arabas].
@@ -122,4 +138,3 @@ Zawistowski, P. and Arabas, J.: "Benchmarking IBHM method using NN3 competition 
 \keyword{ ~models }
 \keyword{ ~regression }
 \keyword{ ~nonlinear }
-

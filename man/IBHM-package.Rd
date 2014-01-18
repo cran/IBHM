@@ -6,7 +6,7 @@
 Approximation using the IBHM method
 }
 \description{
-This package implements an incremental model construction method called IBHM which stands for Incrementally Built Heterogenous Model. The method is designed for solving real number approximation problems in a highly automated fashion and should be considered one of black-box modelling approaches such as Artificial
+Implementation of an incremental model construction method called IBHM which stands for Incrementally Built Heterogeneous Model. The method is designed for solving real-number approximation problems in a highly automated fashion and should be considered one of black-box modelling approaches such as Artificial
 Neural Networks or Support Vector Machines. 
 }
 \details{

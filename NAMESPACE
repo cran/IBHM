@@ -1,3 +1,9 @@
+useDynLib(IBHM)
+import(Rcpp)
+import(DEoptim)
+import(cmaes)
+import(methods)
+
 export(TrainIBHM)
 export(ConfigureIBHM)
 export(IterationSC)

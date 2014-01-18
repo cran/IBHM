@@ -15,10 +15,12 @@ IterationSC <- function(max.iterations){
 
 ValidationSC <- function(x,y){
   list( 
-    eval = function(ctx){            
-      yh <- predict(ctx$m,ctx$sc$x)
-      val <- mean((yh-ctx$sc$y)^2)
-      
+    eval = function(ctx){              
+      ctx.opt <- OptimizeAllWeights(ctx, maxit=20);      
+      yh <- predict(ctx.opt$m,ctx$sc$x)
+      val <- sqrt(mean((yh-ctx$sc$y)^2))
+      ctx$log(' Validation RMSE: ',val)
+            
       if(val > ctx$sc$last.eval){
         ctx$continue <- FALSE
         ctx$m <- ctx$sc$best.model

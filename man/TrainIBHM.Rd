@@ -5,7 +5,7 @@
 TrainIBHM
 }
 \description{
-Trains an IBHM model usinggiven training data with input variables \code{x} and a single output variable \code{y}.
+Trains an IBHM model using  training data with input variables \code{x} and a single output variable \code{y}.
 }
 \usage{
 TrainIBHM(x, y, config = ConfigureIBHM())

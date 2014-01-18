@@ -21,7 +21,7 @@ ValidationSC(x, y)
 }
 
 \details{
-The cirterion is checked after each iteration and the current model is used to predict values on the validation data set. When the error increases in comparison to the previous iteration,
+The criterion is checked after each iteration and the current model is used to predict values on the validation data set. When the error increases in comparison to the previous iteration,
 the construction process is stopped, and the changes in the model from the last iteration are undone.
 }
 

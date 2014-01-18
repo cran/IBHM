@@ -14,26 +14,36 @@ MultiOptim <- function(retries, optim.fun, ...){
 
 OptimizeScalMultiCMAES <- function(goal, n, optim.params){
   MultiOptim(optim.params$retries, OptimizeScalCMAES, 
-                 goal,n, optim.params$inner)
+                 goal,n, optim.params)
 }
 
-OptimizeScalCMAES <- function(goal,n, optim.params){
-  require(cmaes)
-  res <- cmaes::cma_es(runif(n,min=-10,max=10),goal,lower=rep(-1e+1,n),upper=rep(1e+1,n), control=optim.params)                  
+OptimizeScalCMAES <- function(goal,n, optim.params){  
+  res <- cmaes::cma_es(runif(n,min=optim.params$par.min,max=optim.params$par.max),goal,lower=rep(optim.params$par.min,n),upper=rep(optim.params$par.max,n), control=optim.params$inner)                  
   
-  list(eval=res$value, d=res$par)
+  list(eval=res$value, w.par=res$par[[1]], d=res$par[-1])
+}
+
+
+OptimizeScalMultiNM <- function(goal, n, optim.params){
+  MultiOptim(optim.params$retries, OptimizeScalNM, 
+             goal,n, optim.params$inner)
+}
+
+OptimizeScalNM <- function(goal,n, optim.params){
+  res <- optim(runif(n,min=optim.params$par.min,max=optim.params$par.max),goal, control=optim.params$inner)  
+  
+  list(eval=res$value, w.par=res$par[[1]], d=res$par[-1])
 }
 
 OptimizeScalMultiDE <- function(goal, n, optim.params){
   MultiOptim(optim.params$retries, OptimizeScalDE, 
-                 goal,n, optim.params$inner)
+                 goal,n, optim.params)
 }
 
-OptimizeScalDE <- function(goal,n, optim.params){
-  require(DEoptim)
-  res <- DEoptim::DEoptim(goal,lower=rep(-1e+1,n),upper=rep(1e+1,n), optim.params)                  
+OptimizeScalDE <- function(goal,n, optim.params){  
+  res <- DEoptim::DEoptim(goal,lower=rep(optim.params$par.min,n),upper=rep(optim.params$par.max,n), optim.params$inner)                  
   
-  list(eval=res$optim$bestval, d=res$optim$bestmem)
+  list(eval=res$optim$bestval, w.par=res$optim$bestmem[[1]], d=res$optim$bestmem[-1])
 }
 
 
@@ -41,21 +51,35 @@ OptimizeScalDE <- function(goal,n, optim.params){
 # Activation function optimization ----------------------------------------
 
 OptimizeActivMultiCMAES <- function(goal, optim.params){
-  MultiOptim(optim.params$retries, OptimizeActivCMAES, goal,optim.params$inner)
+  MultiOptim(optim.params$retries, OptimizeActivCMAES, goal,optim.params)
 }
 
-OptimizeActivCMAES<- function(goal, optim.params){
-  require(cmaes)
-  res <- cmaes::cma_es(runif(2,min=-10,max=10),goal,lower=rep(-1e+1,2),upper=rep(1e+1,2), control=optim.params)                  
+OptimizeActivCMAES<- function(goal, optim.params){  
+  res <- cmaes::cma_es(runif(2,min=optim.params$par.min,max=optim.params$par.max),goal,lower=rep(optim.params$par.min,2),upper=rep(optim.params$par.max,2), control=optim.params$inner)                  
   
   list( eval=res$value, 
         a=res$par[[1]],
         b=res$par[[2]]
   )
 }
-OptimizeActivDE<- function(goal, optim.params){
-  require(DEoptim)
-  res <- DEoptim::DEoptim(goal,lower=rep(-1.0e+1,2),upper=rep(1.0e+1,2), optim.params)                 
+
+
+OptimizeActivMultiNM <- function(goal, optim.params){
+  MultiOptim(optim.params$retries, OptimizeActivNM, goal,optim.params)
+}
+
+
+OptimizeActivNM<- function(goal, optim.params){
+  res <- optim(runif(2,min=optim.params$par.min,max=optim.params$par.max),goal, control=optim.params$inner)  
+  
+  list( eval=res$value, 
+        a=res$par[[1]],
+        b=res$par[[2]]
+  )
+}
+
+OptimizeActivDE<- function(goal, optim.params){  
+  res <- DEoptim::DEoptim(goal,lower=rep(optim.params$par.min,2),upper=rep(optim.params$par.max,2),optim.params$inner)                 
   
   list( eval=res$optim$bestval, 
         a=res$optim$bestmem[[1]],
@@ -64,5 +88,5 @@ OptimizeActivDE<- function(goal, optim.params){
 }
 
 OptimizeActivMultiDE <- function(goal, optim.params){
-  MultiOptim(optim.params$retries, OptimizeActivDE, goal,optim.params$inner)
+  MultiOptim(optim.params$retries, OptimizeActivDE, goal,optim.params)
 }

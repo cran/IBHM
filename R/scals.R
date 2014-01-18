@@ -3,7 +3,7 @@
 ScalFunctions <- function(filter = NULL){
   # Dot product scalarization
   DotPr <- function(x,d){  
-    return(x%*%d)
+    return(x%*%d[-1]+d[[1]])
   }
   expr(DotPr) <- 'dot.pr'
 
@@ -14,9 +14,9 @@ ScalFunctions <- function(filter = NULL){
     n <- dim(x)[[2]]
     m <- dim(x)[[1]]
     
-    d_m <- matrix(rep(d,m),nrow=m,ncol=n)
+    d_m <- matrix(rep(d[-1],m),nrow=m,ncol=n)
     
-    rowSums((x-d_m)^2)
+    rowSums(d[[1]]*(x-d_m)^2)
   }
   expr(Radial) <- 'radial'
 
@@ -25,9 +25,9 @@ ScalFunctions <- function(filter = NULL){
     n <- dim(x)[[2]]
     m <- dim(x)[[1]]
     
-    d_m <- matrix(rep(d,m),nrow=m,ncol=n)
+    d_m <- matrix(rep(d[-1],m),nrow=m,ncol=n)
     
-    rowSums(sqrt((x-d_m)^2))
+    rowSums(d[[1]]*sqrt((x-d_m)^2))
   }
   expr(RootRadial) <- 'root.radial'
   
@@ -40,4 +40,12 @@ ScalFunctions <- function(filter = NULL){
   }
   
   res
+}
+
+ScalParamDim <- function(scal, x){
+  switch(expr(scal), 
+         dot.pr = ncol(x)+1,
+         radial = ncol(x)+1,
+         root.radial = ncol(x)+1,
+         stop('Unknown scal: ',expr(scal)))
 }

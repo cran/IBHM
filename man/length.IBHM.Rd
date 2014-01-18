@@ -17,7 +17,7 @@ Returns the number of components in a IBHM model.
 }
 }
 \value{
-The number of componens in the given IBHM model.
+The number of components in the given IBHM model.
 }
 
 \seealso{
